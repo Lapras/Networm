@@ -1,18 +1,14 @@
-use std::env;
-use std::io
+mod machine;
+use machine::Machine;
 
 
-use ratatui::{
-    crossterm::event::{self, KeyCode, KeyEventKind},
-    style::Stylize,
-    widgets::Paragraph,
-    DefaultTerminal,
-}
+use petgraph::graph::{NodeIndex, UnGraph};
+use petgraph::algo::{dijkstra, min_spanning_tree};
+use petgraph::data::FromElements;
+use petgraph::dot::{Dot, Config};
 
 fn main() {
-    let mut terminal = ratatui::init();
-    terminal.clear()?;
-    let app_result = run(terminal);
-    ratatui::restore();
-    app_result;
+    let machine1 = Machine::new("192.168.0.1".to_string());
+    let machine2 = Machine::new("192.168.0.2".to_string());
+    let g = UnGraph::<machine::Machine, ()>::from_edges(&[(&machine1, &machine2)]);
 }

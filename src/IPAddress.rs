@@ -1,6 +1,6 @@
-pub mod IPAddress {
+pub mod ipaddress {
     struct IPV4 {
-        address: String;
+        address: String,
     }
 
     impl IPV4 {
@@ -11,7 +11,7 @@ pub mod IPAddress {
 
 
     struct IPV6 {
-        address: String;
+        address: String,
     }
 
     impl IPV6 {
@@ -21,7 +21,7 @@ pub mod IPAddress {
     }
 
     pub enum IPAddress {
-        V4,
-        V6,
+        V4 (IPV4),
+        V6 (IPV6),
     }
 }
