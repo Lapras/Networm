@@ -1,0 +1,65 @@
+/*This graph is an intended result of running networm, a dot formatted graph that displays network details*/
+
+graph Graph {
+
+    node[shape=record, style=filled]
+    splines=false
+    edgeOffset="20pt"    
+    constrain=false
+
+    subgraph cluster0 {
+        label = "Blue Space"
+        style=solid;
+        color = blue;
+
+        machine0 [label="{Router | {IP | <IP1> 192.168.2.1} | { IP | <IP2> 192.0.1.7}}"];
+        machine1 [label="{Switch | { IP | <IP1> 192.168.2.1}}"];
+        machine2 [label="{Workstation 1 | { IP | <IP1> 192.168.2.1}}"];
+        machine3 [label="{Workstation 2 | { IP | <IP1> 192.168.2.1}}"];
+        machine4 [label="{Workstation 3 | { IP | <IP1> 192.168.2.1}}"];
+
+
+        machine2 -- machine1
+        machine3 -- machine1
+        machine4 -- machine1
+        machine1 -- machine0
+    }
+
+    subgraph cluster1 {
+        label = "Gray Space"
+        style=solid;
+        color = Gray;
+
+        machine5 [label="{Proxy 1 | { IP | <IP1> 192.0.2.3}}"];
+        machine6 [label="{Proxy 2 | { IP | <IP1> 192.0.23.3}}"];
+        machine7 [label="{Proxy 3 | { IP | <IP1> 192.0.156.3}}"];
+        machine8 [label="{Proxy 4 | { IP | <IP1> 192.0.23.3}}"];
+
+        machine5 -- machine7
+        machine6 -- machine8
+        machine7-- machine8
+
+        machine5 -- machine0
+        machine6 -- machine0
+    }
+
+    subgraph cluster2 {
+        label = "Red Space"
+        style=solid;
+        color = Red;
+
+        machine9 [label="{Target 1 | { IP | <IP1> 192.0.25.9} | { IP | <IP2> 10.7.0.2}}"];
+        machine10 [label="{Target 2 | { IP | <IP1> 10.7.0.3}}"];
+        machine11 [label="{Target 3 | { IP | <IP1> 10.7.0.5}}"];
+        machine12 [label="{Target 4 | { IP | <IP1> 10.7.0.6}}"];
+
+
+
+        machine9 -- machine10
+        machine9 -- machine11
+        machine9 -- machine6
+        machine9 -- machine7
+
+        machine10 -- machine12
+    }
+}
