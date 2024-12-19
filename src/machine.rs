@@ -1,3 +1,5 @@
+use std::fmt;
+
 pub struct Machine {
     address: String,
     os: OperatingSystem,
@@ -23,5 +25,11 @@ impl Machine {
             os: OperatingSystem::Linux,
             machine_type: MachineType::Physical,
         }
+    }
+}
+
+impl fmt::Display for Machine {
+    fn fmt(&self, f :&mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.address)
     }
 }
