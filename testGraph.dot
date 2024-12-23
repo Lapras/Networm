@@ -1,5 +1,15 @@
-graph {
-    0 [ label = "192.168.0.1" ]
-    1 [ label = "192.168.0.2" ]
-    0 -- 1 [ label = "1" ]
-}
+graph Graph { 
+node[shape=record, style=filled] 
+ splines=false 
+Node1 [label="{ Node1 | { IP | 192.168.10.2 } | { IP | 192.168.11.2 }}"];
+Node2 [label="{ Node2 | { IP | 192.168.10.3 } | { IP | 192.168.11.3 }}"];
+Node3 [label="{ Node3 | { IP | 192.168.10.4 }}"];
+Node4 [label="{ Node4 | { IP | 192.168.10.5 }}"];
+Target [label="{ Target | { IP | 192.168.10.6 }}"];
+Router [label="{ Router | { IP | 192.168.10.7 } | { IP | 192.168.11.7 }}"];
+Node1 -- Node2 
+Node2 -- Node3 
+Node3 -- Node4 
+Target -- Router 
+Node1 -- Router 
+} 

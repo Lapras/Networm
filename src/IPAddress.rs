@@ -1,27 +1,21 @@
-pub mod ipaddress {
-    struct IPV4 {
-        address: String,
-    }
+pub trait IpAddress {
+    fn to_string(&self) -> String;
+}
 
-    impl IPV4 {
-        fn toString(&self) -> String {
-            address;
+pub struct IPV4Address {
+    address: String,
+}
+
+impl IPV4Address {
+    pub fn new(address: String) -> IPV4Address {
+        IPV4Address {
+            address: address,
         }
     }
+}
 
-
-    struct IPV6 {
-        address: String,
-    }
-
-    impl IPV6 {
-        fn toString(&self) -> String {
-            address;
-        }
-    }
-
-    pub enum IPAddress {
-        V4 (IPV4),
-        V6 (IPV6),
+impl IpAddress for IPV4Address {
+    fn to_string(&self) -> String {
+        self.address.to_string()
     }
 }

@@ -1,35 +1,42 @@
-use std::fmt;
-
+use std::fmt::{self, format};
+use crate::dot_traits::DotNode;
+use crate::ipaddress::{self, IpAddress};
 pub struct Machine {
-    address: String,
-    os: OperatingSystem,
-    machine_type: MachineType,
-}
-
-pub enum OperatingSystem {
-    Linux,
-    Windows,
-    Mac,
-}
-
-pub enum MachineType {
-    Physical,
-    Virtual, 
-    Containerized,
+    name: String,
+    addressList: Vec<String>,
 }
 
 impl Machine {
-    pub fn new(address: String) -> Machine {
+    pub fn new(name: String) -> Machine {
         Machine {
-            address: address,
-            os: OperatingSystem::Linux,
-            machine_type: MachineType::Physical,
+            name: name,
+            addressList: Vec::new(),
         }
+    }
+
+    pub fn add_address(&mut self, address: String) {
+        self.addressList.push(address);
     }
 }
 
 impl fmt::Display for Machine {
     fn fmt(&self, f :&mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.address)
+        write!(f, "{}", self.print_node())
     }
 }
+
+impl DotNode for Machine {
+    fn print_node(&self) -> String {
+        let mut out: String = format!("{} [label=\"{{ {}", self.name, self.name);
+        for ipaddress in self.addressList.iter() {
+            out.push_str(format!(" | {{ IP | {} }}", ipaddress).as_str());
+        }
+        out.push_str("}\"];\n");
+        out
+    }
+
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+}
+
