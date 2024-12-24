@@ -8,6 +8,7 @@ use machine::Machine;
 use dot_traits::DotNode;
 use dot_traits::DotEdge;
 
+use writers::FileWriter;
 use writers::Writer;
 use writers::StdWriter;
 
@@ -17,7 +18,8 @@ use petgraph::prelude::*;
 use petgraph::visit::IntoNodeReferences;
 
 fn main() {
-    let std_write: StdWriter = StdWriter::new();
+    let mut std_write: StdWriter = StdWriter::new();
+    let mut file_write: FileWriter = FileWriter::new("../../testGraph.dot".to_string());
 
     let mut machine1 = Machine::new("Node1".to_string());
     let mut machine2 = Machine::new("Node2".to_string());
@@ -52,11 +54,10 @@ fn main() {
     basic_graph.add_edge(node1, node6, ());
 
 
-
-    print_graph(&std_write, basic_graph);
+    print_graph(&mut file_write, basic_graph);
 }
 
-fn print_graph<W: Writer, N: DotNode>(writer: &W, graph: UnGraph<N, ()>) {
+fn print_graph<W: Writer, N: DotNode>(writer: &mut W, graph: UnGraph<N, ()>) {
     let mut indent: i32 = 0;
     writer.writeln("graph Graph {".to_string(), indent);
     indent += 1;
