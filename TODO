@@ -1,3 +1,2 @@
-1. Implement indentation in the writer trait
 2. Implement a file writer
 3. Implement clusters for the DOT formatting

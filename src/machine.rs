@@ -3,19 +3,19 @@ use crate::dot_traits::DotNode;
 use crate::ipaddress::{self, IpAddress};
 pub struct Machine {
     name: String,
-    addressList: Vec<String>,
+    address_list: Vec<String>,
 }
 
 impl Machine {
     pub fn new(name: String) -> Machine {
         Machine {
             name: name,
-            addressList: Vec::new(),
+            address_list: Vec::new(),
         }
     }
 
     pub fn add_address(&mut self, address: String) {
-        self.addressList.push(address);
+        self.address_list.push(address);
     }
 }
 
@@ -28,10 +28,10 @@ impl fmt::Display for Machine {
 impl DotNode for Machine {
     fn print_node(&self) -> String {
         let mut out: String = format!("{} [label=\"{{ {}", self.name, self.name);
-        for ipaddress in self.addressList.iter() {
+        for ipaddress in self.address_list.iter() {
             out.push_str(format!(" | {{ IP | {} }}", ipaddress).as_str());
         }
-        out.push_str("}\"];\n");
+        out.push_str("}\"];");
         out
     }
 

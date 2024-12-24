@@ -14,7 +14,6 @@ use writers::StdWriter;
 use petgraph::graph::Node;
 use petgraph::prelude::*;
 
-use petgraph::dot::{Config, Dot};
 use petgraph::visit::IntoNodeReferences;
 
 fn main() {
@@ -58,11 +57,14 @@ fn main() {
 }
 
 fn print_graph<W: Writer, N: DotNode>(writer: &W, graph: UnGraph<N, ()>) {
-    writer.write("graph Graph { \n".to_string());
-    writer.write("node[shape=record, style=filled] \n splines=false \n".to_string());
+    let mut indent: i32 = 0;
+    writer.writeln("graph Graph {".to_string(), indent);
+    indent += 1;
+    writer.writeln("node[shape=record, style=filled]".to_string(), indent);
+    writer.writeln("splines=false".to_string(), indent);
     for(_node_index, node_data) in graph.node_references() {
             // Step 1: Print each node within  a cluster/all nodes in the graph
-            writer.write(node_data.print_node());
+            writer.writeln(node_data.print_node(), indent);
     }
 
     for edge_index in graph.edge_indices() {
@@ -80,9 +82,10 @@ fn print_graph<W: Writer, N: DotNode>(writer: &W, graph: UnGraph<N, ()>) {
             None => continue,
         }
 
-        writer.write(format!("{} -- {} \n", source.name(), target.name()));
+        writer.writeln(format!("{} -- {}", source.name(), target.name()), indent);
     }
 
-    writer.write("} \n".to_string());
+    indent -= 1;
+    writer.writeln("}".to_string(), indent);
 }
 
