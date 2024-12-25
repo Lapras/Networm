@@ -9,6 +9,7 @@ use dot_traits::DotNode;
 use dot_traits::DotEdge;
 
 use writers::FileWriter;
+use writers::MultiWriter;
 use writers::Writer;
 use writers::StdWriter;
 
@@ -19,7 +20,11 @@ use petgraph::visit::IntoNodeReferences;
 
 fn main() {
     let mut std_write: StdWriter = StdWriter::new();
-    let mut file_write: FileWriter = FileWriter::new("../../testGraph.dot".to_string());
+    let mut file_write: FileWriter = FileWriter::new("testGraph.dot");
+    let mut multi_write: MultiWriter = MultiWriter::new();
+
+    multi_write.add_writer(Box::new(std_write));
+    multi_write.add_writer(Box::new(file_write));
 
     let mut machine1 = Machine::new("Node1".to_string());
     let mut machine2 = Machine::new("Node2".to_string());
@@ -54,18 +59,18 @@ fn main() {
     basic_graph.add_edge(node1, node6, ());
 
 
-    print_graph(&mut file_write, basic_graph);
+    print_graph(&mut multi_write, basic_graph);
 }
 
 fn print_graph<W: Writer, N: DotNode>(writer: &mut W, graph: UnGraph<N, ()>) {
     let mut indent: i32 = 0;
-    writer.writeln("graph Graph {".to_string(), indent);
+    writer.writeln("graph Graph {", indent);
     indent += 1;
-    writer.writeln("node[shape=record, style=filled]".to_string(), indent);
-    writer.writeln("splines=false".to_string(), indent);
+    writer.writeln("node[shape=record, style=filled]", indent);
+    writer.writeln("splines=false", indent);
     for(_node_index, node_data) in graph.node_references() {
             // Step 1: Print each node within  a cluster/all nodes in the graph
-            writer.writeln(node_data.print_node(), indent);
+            writer.writeln(node_data.print_node().as_str() , indent);
     }
 
     for edge_index in graph.edge_indices() {
@@ -83,10 +88,10 @@ fn print_graph<W: Writer, N: DotNode>(writer: &mut W, graph: UnGraph<N, ()>) {
             None => continue,
         }
 
-        writer.writeln(format!("{} -- {}", source.name(), target.name()), indent);
+        writer.writeln(format!("{} -- {}", source.name(), target.name()).as_str(), indent);
     }
 
     indent -= 1;
-    writer.writeln("}".to_string(), indent);
+    writer.writeln("}", indent);
 }
 
