@@ -1,5 +1,4 @@
-use std::fs::{self, File};
-use std::io::BufWriter;
+use std::fs::File;
 use std::io::Write;
 
 pub trait Writer {

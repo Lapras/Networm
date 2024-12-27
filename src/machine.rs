@@ -1,18 +1,21 @@
-use std::fmt::{self, format};
+use std::fmt;
 use std::rc::Rc;
-use crate::dot_traits::DotNode;
-use crate::dot_traits::Cluster;
-use crate::ipaddress::{self, IpAddress};
+use crate::dot_traits::{DotNode, DotCluster};
 
 
 pub struct Machine {
     name: String,
     address_list: Vec<String>,
-    cluster: Option<Rc<Cluster>>,
+    cluster: Option<Rc<DotCluster>>,
 }
 
 impl Machine {
-    pub fn new(name: String, cluster: Option<Rc<Cluster>>) -> Machine {
+    pub fn new(name: String, cluster: Option<&Rc<DotCluster>>) -> Machine {
+        let cluster = match cluster {
+            Some(c) => Some(c.clone()),
+            None => None,
+        };
+
         Machine {
             name: name,
             address_list: Vec::new(),
@@ -24,7 +27,7 @@ impl Machine {
         self.address_list.push(address);
     }
 
-    pub fn set_cluster(&mut self, cluster: Rc<Cluster>) {
+    pub fn set_cluster(&mut self, cluster: Rc<DotCluster>) {
         self.cluster = Some(cluster);
     }
 }
@@ -37,7 +40,7 @@ impl fmt::Display for Machine {
 
 impl DotNode for Machine {
     fn print_node(&self) -> String {
-        let mut out: String = format!("{} [label=\"{{ {}", self.name, self.name);
+        let mut out: String = format!("{} [label=\"{{ {}", self.name.replace(" ", ""), self.name);
         for ipaddress in self.address_list.iter() {
             out.push_str(format!(" | {{ IP | {} }}", ipaddress).as_str());
         }
@@ -49,7 +52,7 @@ impl DotNode for Machine {
         self.name.clone()
     }
 
-    fn get_cluster(&self) -> &Option<Rc<Cluster>>  {
+    fn get_cluster(&self) -> &Option<Rc<DotCluster>>  {
         &self.cluster
     }
 }

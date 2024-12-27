@@ -19,3 +19,5 @@ impl IpAddress for IPV4Address {
         self.address.to_string()
     }
 }
+
+// Placeholder

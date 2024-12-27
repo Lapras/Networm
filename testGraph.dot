@@ -1,15 +1,57 @@
 graph Graph {
 	node[shape=record, style=filled]
 	splines=false
-	Node1 [label="{ Node1 | { IP | 192.168.10.2 } | { IP | 192.168.11.2 }}"];
-	Node2 [label="{ Node2 | { IP | 192.168.10.3 } | { IP | 192.168.11.3 }}"];
-	Node3 [label="{ Node3 | { IP | 192.168.10.4 }}"];
-	Node4 [label="{ Node4 | { IP | 192.168.10.5 }}"];
-	Target [label="{ Target | { IP | 192.168.10.6 }}"];
-	Router [label="{ Router | { IP | 192.168.10.7 } | { IP | 192.168.11.7 }}"];
-	Node1 -- Node2
-	Node2 -- Node3
-	Node3 -- Node4
-	Target -- Router
-	Node1 -- Router
+	
+	subgraph cluster0 {
+		label = "Blue space"
+		style = solid;
+		color = blue
+		
+		Workstation3 [label="{ Workstation 3 | { IP | 192.168.2.5 }}"];
+		Workstation2 [label="{ Workstation 2 | { IP | 192.168.2.4 }}"];
+		Switch [label="{ Switch | { IP | 192.168.2.2 }}"];
+		Router [label="{ Router | { IP | 192.168.2.1 } | { IP | 192.0.1.7 }}"];
+		Workstation1 [label="{ Workstation 1 | { IP | 192.168.2.3 }}"];
+		
+		Workstation3 -- Switch
+		Workstation2 -- Switch
+		Switch -- Router
+		Switch -- Workstation1
+	}
+	
+	subgraph cluster1 {
+		label = "Red space"
+		style = solid;
+		color = red
+		
+		Target2 [label="{ Target 2 | { IP | 10.7.0.3 }}"];
+		Target1 [label="{ Target 1 | { IP | 192.0.25.9 } | { IP | 10.7.0.2 }}"];
+		Target3 [label="{ Target 3 | { IP | 10.7.0.5 }}"];
+		Target4 [label="{ Target 4 | { IP | 10.7.0.6 }}"];
+		
+		Target2 -- Target4
+		Target2 -- Target1
+		Target1 -- Target3
+	}
+	
+	subgraph cluster2 {
+		label = "gray space"
+		style = solid;
+		color = gray
+		
+		Proxy2 [label="{ Proxy 2 | { IP | 192.0.23.3 }}"];
+		Proxy1 [label="{ Proxy 1 | { IP | 192.0.2.3 }}"];
+		Proxy4 [label="{ Proxy 4 | { IP | 192.0.27.9 }}"];
+		Proxy3 [label="{ Proxy 3 | { IP | 192.0.156.4 }}"];
+		
+		Proxy2 -- Proxy4
+		Proxy1 -- Proxy3
+		Proxy4 -- Proxy3
+	}
+	
+	
+	Router -- Proxy1
+	Router -- Proxy2
+	Proxy3 -- Target1
+	Proxy2 -- Target1
 }
