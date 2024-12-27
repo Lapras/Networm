@@ -1,0 +1,8 @@
+1) Start with an initial graph
+DOTNodes are labeled with clusters
+Nodes have a cluster enum that resolves into currently: none, or cluster
+Create dict of all available  clusters
+For each cluster
+    print cluster deatils
+    For each node in cluster: search edges that go within cluster, add those edges to cluster, store node indices in map
+Print non-clustered nodes and edges from graph, check  if edgges are contained within map

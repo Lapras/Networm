@@ -1,12 +1,25 @@
+use std::rc::Rc;
+
 pub trait DotNode {
     fn print_node(&self) -> String;
     fn name(&self) -> String;
+    fn get_cluster(&self) -> &Option<Rc<Cluster>>;
 }
 
-pub trait DotCluster {
-    fn print_cluster(&self) -> String;
+
+#[derive(PartialEq, Eq, Hash)]
+
+pub struct Cluster {
+    name: String,
+    color: String,
 }
 
-pub trait DotEdge {
-    fn print_edge(&self) -> String;
+impl Cluster {
+    pub fn new(name: String, color: String) -> Cluster {
+        Cluster {
+            name: name,
+            color: color,
+
+        }
+    }
 }

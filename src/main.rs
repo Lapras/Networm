@@ -2,11 +2,11 @@ mod machine;
 mod dot_traits;
 mod ipaddress;
 mod writers;
+mod net_graph;
 
 use machine::Machine;
 
 use dot_traits::DotNode;
-use dot_traits::DotEdge;
 
 use writers::FileWriter;
 use writers::MultiWriter;
@@ -26,12 +26,12 @@ fn main() {
     multi_write.add_writer(Box::new(std_write));
     multi_write.add_writer(Box::new(file_write));
 
-    let mut machine1 = Machine::new("Node1".to_string());
-    let mut machine2 = Machine::new("Node2".to_string());
-    let mut machine3 = Machine::new("Node3".to_string());
-    let mut machine4 = Machine::new("Node4".to_string());
-    let mut machine5 = Machine::new("Target".to_string());
-    let mut machine6 = Machine::new("Router".to_string());
+    let mut machine1 = Machine::new("Node1".to_string(), None);
+    let mut machine2 = Machine::new("Node2".to_string(), None);
+    let mut machine3 = Machine::new("Node3".to_string(), None);
+    let mut machine4 = Machine::new("Node4".to_string(), None);
+    let mut machine5 = Machine::new("Target".to_string(), None);
+    let mut machine6 = Machine::new("Router".to_string(), None);
 
     machine1.add_address("192.168.10.2".to_string());
     machine2.add_address("192.168.10.3".to_string());
@@ -88,10 +88,9 @@ fn print_graph<W: Writer, N: DotNode>(writer: &mut W, graph: UnGraph<N, ()>) {
             None => continue,
         }
 
-        writer.writeln(format!("{} -- {}", source.name(), target.name()).as_str(), indent);
+        writer.writeln(&format!("{} -- {}", source.name(), target.name()), indent);
     }
 
     indent -= 1;
     writer.writeln("}", indent);
 }
-

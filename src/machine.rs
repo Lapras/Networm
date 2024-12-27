@@ -1,21 +1,31 @@
 use std::fmt::{self, format};
+use std::rc::Rc;
 use crate::dot_traits::DotNode;
+use crate::dot_traits::Cluster;
 use crate::ipaddress::{self, IpAddress};
+
+
 pub struct Machine {
     name: String,
     address_list: Vec<String>,
+    cluster: Option<Rc<Cluster>>,
 }
 
 impl Machine {
-    pub fn new(name: String) -> Machine {
+    pub fn new(name: String, cluster: Option<Rc<Cluster>>) -> Machine {
         Machine {
             name: name,
             address_list: Vec::new(),
+            cluster: cluster,
         }
     }
 
     pub fn add_address(&mut self, address: String) {
         self.address_list.push(address);
+    }
+
+    pub fn set_cluster(&mut self, cluster: Rc<Cluster>) {
+        self.cluster = Some(cluster);
     }
 }
 
@@ -37,6 +47,10 @@ impl DotNode for Machine {
 
     fn name(&self) -> String {
         self.name.clone()
+    }
+
+    fn get_cluster(&self) -> &Option<Rc<Cluster>>  {
+        &self.cluster
     }
 }
 
