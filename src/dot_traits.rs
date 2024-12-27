@@ -1,7 +1,6 @@
 use std::rc::Rc;
 use crate::writers::Writer;
 
-
 pub trait DotNode {
     fn print_node(&self) -> String;
     fn name(&self) -> String;

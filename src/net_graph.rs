@@ -41,6 +41,7 @@ impl NetGraph {
         let mut indent: i32 = 0;
         let mut cluster_num: i32 = 0;
 
+        //HashSets so that we can cache the nodes/edges in clusters to filter them later
         let mut clustered_nodes: HashSet<NodeIndex> = HashSet::new();
         let mut clustered_edges: HashSet<(NodeIndex, NodeIndex)> = HashSet::new();
 
@@ -53,6 +54,7 @@ impl NetGraph {
         for cluster in self.cluster_set.iter() {
             writer.writeln(&format!("subgraph cluster{} {{", cluster_num), indent);
 
+            //print_cluster returns the nodes/edges that are contained within that cluster. The | operator adds those sets to our overall set
             let (new_nodes, new_edges) = self.print_cluster(writer, cluster, indent + 1);
             clustered_nodes = &clustered_nodes | &new_nodes;
             clustered_edges = &clustered_edges | &new_edges;
@@ -85,6 +87,7 @@ impl NetGraph {
                 None => continue,
             }
 
+            // We have to check both (source, target) and (target, source) as this is an undirected graph, failure to check results in double edges
             if !clustered_edges.contains(&(source_index, target_index))
                 && !clustered_edges.contains(&(target_index, source_index)) {
                 writer.writeln(&format!("{} -- {}", source.name().replace(" ", ""), target.name().replace(" ", "")), indent);
