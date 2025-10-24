@@ -1,17 +1,12 @@
-mod machine;
-mod dot_traits;
-mod ipaddress;
-mod writers;
-mod net_graph;
+use net_worm::dot_traits;
+use net_worm::machine;
+use net_worm::writers::{StdWriter, FileWriter, MultiWriter};
+use net_worm::net_graph::NetGraph;
 
 use std::rc::Rc;
 
 use dot_traits::DotCluster;
 use machine::Machine;
-
-use net_graph::NetGraph;
-use writers::{FileWriter, MultiWriter, StdWriter};
-
 fn main() {
     let mut net_graph: NetGraph = NetGraph::new();
 

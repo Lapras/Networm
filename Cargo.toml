@@ -1,8 +1,19 @@
 [package]
-name = "NetWorm"
+name = "net_worm"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 crossterm = "0.28.1"
 petgraph = "0.6.5"
+qscan = "0.6.0"
+surge-ping = "0.8.1"
+tokio = "1.42.0"
+
+[[bin]]
+name = "basic_graph"
+path = "src/bin/basic_graph.rs"
+
+[[bin]]
+name = "ping_scan"
+path = "src/bin/ping_scan.rs"
