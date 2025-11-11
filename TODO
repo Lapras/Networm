@@ -1,1 +1,4 @@
-1. Implement clusters for the DOT formatting
+- Create server/CLI agent
+- Code to authenticate and control/execute over SSH
+- Tunneling with rust research?
+- Create a client agent, listening over websocket to a server

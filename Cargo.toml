@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 crossterm = "0.28.1"
+openssh = "0.11.5"
 petgraph = "0.6.5"
 qscan = "0.6.0"
 surge-ping = "0.8.1"
