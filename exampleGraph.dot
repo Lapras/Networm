@@ -1,6 +1,6 @@
 /*This graph is an intended result of running networm, a dot formatted graph that displays network details*/
 
-graph Graph {
+Graph {
 
     node[shape=record, style=filled]
     splines=false

@@ -1,22 +1,20 @@
-graph Graph {
+Graph {
 	node[shape=record, style=filled]
 	splines=false
 	
 	subgraph cluster0 {
-		label = "Blue space"
+		label = "gray space"
 		style = solid;
-		color = blue
+		color = gray
 		
-		Workstation1 [label="{ Workstation 1 | { IP | 192.168.2.3 }}"];
-		Workstation3 [label="{ Workstation 3 | { IP | 192.168.2.5 }}"];
-		Workstation2 [label="{ Workstation 2 | { IP | 192.168.2.4 }}"];
-		Router [label="{ Router | { IP | 192.168.2.1 } | { IP | 192.0.1.7 }}"];
-		Switch [label="{ Switch | { IP | 192.168.2.2 }}"];
+		Proxy1 [label="{ Proxy 1 | { IP | 192.0.2.3 }}"];
+		Proxy4 [label="{ Proxy 4 | { IP | 192.0.27.9 }}"];
+		Proxy3 [label="{ Proxy 3 | { IP | 192.0.156.4 }}"];
+		Proxy2 [label="{ Proxy 2 | { IP | 192.0.23.3 }}"];
 		
-		Workstation1 -- Switch
-		Workstation3 -- Switch
-		Workstation2 -- Switch
-		Router -- Switch
+		Proxy1 -- Proxy3
+		Proxy4 -- Proxy2
+		Proxy4 -- Proxy3
 	}
 	
 	subgraph cluster1 {
@@ -24,29 +22,31 @@ graph Graph {
 		style = solid;
 		color = red
 		
-		Target1 [label="{ Target 1 | { IP | 192.0.25.9 } | { IP | 10.7.0.2 }}"];
-		Target3 [label="{ Target 3 | { IP | 10.7.0.5 }}"];
-		Target4 [label="{ Target 4 | { IP | 10.7.0.6 }}"];
 		Target2 [label="{ Target 2 | { IP | 10.7.0.3 }}"];
+		Target1 [label="{ Target 1 | { IP | 192.0.25.9 } | { IP | 10.7.0.2 }}"];
+		Target4 [label="{ Target 4 | { IP | 10.7.0.6 }}"];
+		Target3 [label="{ Target 3 | { IP | 10.7.0.5 }}"];
 		
+		Target2 -- Target4
+		Target2 -- Target1
 		Target1 -- Target3
-		Target1 -- Target2
-		Target4 -- Target2
 	}
 	
 	subgraph cluster2 {
-		label = "gray space"
+		label = "Blue space"
 		style = solid;
-		color = gray
+		color = blue
 		
-		Proxy2 [label="{ Proxy 2 | { IP | 192.0.23.3 }}"];
-		Proxy1 [label="{ Proxy 1 | { IP | 192.0.2.3 }}"];
-		Proxy3 [label="{ Proxy 3 | { IP | 192.0.156.4 }}"];
-		Proxy4 [label="{ Proxy 4 | { IP | 192.0.27.9 }}"];
+		Switch [label="{ Switch | { IP | 192.168.2.2 }}"];
+		Workstation1 [label="{ Workstation 1 | { IP | 192.168.2.3 }}"];
+		Workstation2 [label="{ Workstation 2 | { IP | 192.168.2.4 }}"];
+		Workstation3 [label="{ Workstation 3 | { IP | 192.168.2.5 }}"];
+		Router [label="{ Router | { IP | 192.168.2.1 } | { IP | 192.0.1.7 }}"];
 		
-		Proxy2 -- Proxy4
-		Proxy1 -- Proxy3
-		Proxy3 -- Proxy4
+		Switch -- Router
+		Switch -- Workstation3
+		Switch -- Workstation2
+		Switch -- Workstation1
 	}
 	
 	
