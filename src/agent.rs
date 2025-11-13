@@ -7,12 +7,6 @@ pub struct Agent {
 
 }
 
-pub fn init_tracing() {
-    let _ = tracing_subscriber::fmt()
-        .with_env_filter(EnvFilter::from_default_env())
-        .try_init();
-}
-
 pub fn build_swarm() -> Result<Swarm<ping::Behaviour>, Box<dyn Error>> {
     let swarm = libp2p::SwarmBuilder::with_new_identity()
         .with_tokio()

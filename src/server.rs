@@ -1,3 +1,5 @@
+mod input;
+
 use std::{error::Error};
 use futures::prelude::*;
 use libp2p::{noise, ping, swarm::SwarmEvent, tcp, yamux, Multiaddr, Swarm};
@@ -5,13 +7,8 @@ use tokio::sync::mpsc;
 use tokio::io::{self, AsyncBufReadExt, BufReader};
 use tokio::time::Duration;
 use tracing_subscriber::EnvFilter;
+use input::handle_input;
 
-/// Initialize tracing/logging
-pub fn init_tracing() {
-    let _ = tracing_subscriber::fmt()
-        .with_env_filter(EnvFilter::from_default_env())
-        .try_init();
-}
 
 /// Spawn a task that reads stdin lines and sends them through a channel
 pub fn spawn_stdin_task() -> mpsc::UnboundedReceiver<String> {
@@ -61,8 +58,7 @@ pub async fn run_interactive(mut swarm: Swarm<ping::Behaviour>, mut rx: mpsc::Un
                 }
             }
             Some(line) = rx.recv() => {
-                println!("User typed: {}", line);
-                // TODO: send over libp2p or handle commands
+                handle_input(line);
             }
         }
     }

@@ -5,3 +5,4 @@ pub mod dot_traits;
 pub mod scanners;
 pub mod agent;
 pub mod server;
+pub mod tracing;

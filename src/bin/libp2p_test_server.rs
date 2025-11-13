@@ -1,9 +1,10 @@
 use std::error::Error;
 use net_worm::server;
+use net_worm::tracing;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    server::init_tracing();
+    tracing::init_tracing();
     let rx = server::spawn_stdin_task();
     let swarm = server::build_swarm()?;
 
