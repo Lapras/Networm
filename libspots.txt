@@ -1,0 +1,4 @@
+Putting in important library functions that I can jump to to figure out how to implement certain things
+
+SSH ProxyJump connections: https://docs.rs/openssh/latest/openssh/struct.SessionBuilder.html#method.jump_hosts
+This is also just a good openssh lib as well.
