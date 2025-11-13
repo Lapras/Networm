@@ -1,5 +1,5 @@
 use std::error::Error;
-use net_worm::agent::{init_tracing, build_swarm, run_swarm};
+use net_worm::agent::{build_swarm, run_swarm};
 use net_worm::tracing;
 
 #[tokio::main]
