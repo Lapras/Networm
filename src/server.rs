@@ -1,7 +1,7 @@
 mod input;
 mod commands;
 
-use commands::{Command, AddCommand};
+use commands::{Command, AddCommand, Connect};
 
 use crate::net_graph::NetGraph;
 use crate::machine::Machine;
@@ -73,8 +73,28 @@ impl Server {
         }
     }
 
-    fn connect_machines(&mut self, Connect {name1 : name1, name2 : name2}) {
-        self.network.find_node(name1)
+    fn connect_machines(&mut self, connect : Connect) {
+        let name1 = connect.name1.clone();
+        let name2 = connect.name2.clone();
+
+        let maybe_node1 = self.network.find_node(&connect.name1);
+        let maybe_node2 = self.network.find_node(&connect.name2);
+
+        match (maybe_node1, maybe_node2) {
+            (Some(node1), Some(node2)) => {
+                self.network.add_edge(node1, node2);
+                println!("Connected {} and {}", name1, name2);
+            }
+            (None, Some(_)) => {
+                println!("Machine '{}' not found", name1);
+            }
+            (Some(_), None) => {
+                println!("Machine '{}' not found", name2);
+            }
+            (None, None) => {
+                println!("Machines '{}' and '{}' not found", name1, name2);
+            }
+        }
     }
     
     fn add_machine(&mut self, name : String, address : Option<String>) {
