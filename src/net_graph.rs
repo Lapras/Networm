@@ -139,4 +139,24 @@ impl NetGraph {
             }
         nodes
     }
+
+    pub fn find_node(&self, name: &str) -> Option<NodeIndex> {
+        for (node_index, node_data) in self.graph.node_references() {
+            if node_data.name() == name {
+                return Some(node_index);
+            }
+        }
+        None
+    }
+
+    pub fn print_nodes(&self) {
+        for (_idx, node_rc) in self.graph.node_references() {
+            // node_rc is an Rc<dyn DotNode>
+            println!(
+                "Machine: {}",
+                node_rc.name(),
+            );
+        }
+    }
+
 }

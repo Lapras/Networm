@@ -1,6 +1,41 @@
 use clap::{Parser, Subcommand, Args};
 
+#[derive(Debug, Parser)]
+#[clap(author, version, about)]
+pub struct InputArgs {
+    #[clap(subcommand)]
+    pub command: Command
+}
+
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    List
+    List,
+    #[clap(subcommand)]
+    Add(AddCommand),
+    Connect(Connect),
+    SetLocal,
+    Exit
+}
+
+#[derive(Debug, Subcommand)]
+pub enum AddCommand {
+    Machine(Machine),
+    Address(Address),
+}
+
+#[derive(Debug, Args)]
+pub struct Machine {
+    pub name: String,
+    pub address: Option<String>,
+}
+
+#[derive(Debug, Args)]
+pub struct Address {
+    pub address : String,
+}
+
+#[derive(Debug, Args)]
+pub struct Connect {
+    pub name1 : String,
+    pub name2 : String
 }

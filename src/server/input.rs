@@ -1,4 +1,4 @@
-use clap::{Parser, Subcommand};
+use clap::{Parser};
 use std::io::{self};
 
 use crate::server::commands;
@@ -18,7 +18,7 @@ pub fn parse_input(line: String) -> Option<InputParser> {
         Ok(cli) => {
             Some(cli)
         },
-        Err(err) => {
+        Err(_err) => {
             None
         }
     }
@@ -31,7 +31,7 @@ pub fn read_line() -> String {
         Ok(_) => {
             // println!("Read line: {buffer}")
         },
-        Err(e) => {
+        Err(_e) => {
             // println!("Error reading input: {e}")
         }
     }

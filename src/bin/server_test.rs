@@ -1,5 +1,7 @@
-use net_worm::server;
+use net_worm::server::Server;
 
 fn main() {
-    server::server_loop();
+    let mut server = Server::new();
+
+    server.server_loop();
 }
