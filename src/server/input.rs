@@ -6,11 +6,11 @@ use crate::server::commands;
 #[clap(author, version, about)]
 pub struct InputParser {
     #[command(subcommand)]
-    command: commands::Command,
+    pub command: commands::Command,
 }
 
 
-pub fn parse_input(line: String) -> Option<InputParse> {
+pub fn parse_input(line: String) -> Option<InputParser> {
     let args = line.split_whitespace();
     let args = std::iter::once("networm").chain(args);
 
@@ -29,10 +29,10 @@ pub fn read_line() -> String {
 
     match io::stdin().read_line(&mut buffer) {
         Ok(_) => {
-            println!("Read line: {buffer}")
+            // println!("Read line: {buffer}")
         },
         Err(e) => {
-            println!("Error reading input: {e}")
+            // println!("Error reading input: {e}")
         }
     }
 

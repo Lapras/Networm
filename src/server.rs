@@ -12,10 +12,9 @@ pub fn server_loop() {
         print!("> ");
 
         let input = input::parse_input(input::read_line());
-
         match input {
-            Some(command) => {
-
+            Some(cli) => {
+                handle_command(cli.command)
             }
             None => {
                 println!("Invalid command")
@@ -24,13 +23,13 @@ pub fn server_loop() {
     }
 }
 
-fn handle_command(command: InputParser) {
+fn handle_command(command: Command) {
     match command {
         Command::List => {
             println!("Handling the list command");
         }
         _ => {
-            println!("Unrecognized Command")
+            println!("Unrecognized command")
         }
     }
 }
