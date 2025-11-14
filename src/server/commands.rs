@@ -17,6 +17,7 @@ pub enum Command {
     Path(Path),
     SetLocal(SetLocal),
     Test(Path),
+    PrintGraph(File),
     Exit,
 }
 
@@ -52,4 +53,9 @@ pub struct SetLocal {
 pub struct Path {
     pub source : String,
     pub dest : String,
+}
+
+#[derive(Debug, Args)]
+pub struct File {
+    pub name : String,
 }

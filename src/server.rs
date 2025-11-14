@@ -9,6 +9,8 @@ use crate::machine::Machine;
 use crate::ssh::test_connection;
 use tokio;
 
+use crate::writers::FileWriter;
+
 use std::rc::Rc;
 
 use std::io::{Write, stdout};
@@ -73,6 +75,12 @@ impl Server {
             Command::Test(cmd) => {
                 println!("Testing a connection");
                 self.test_connect(&cmd.source, &cmd.dest);
+            }
+            Command::PrintGraph(cmd) => {
+                let filename = format!("{}.dot",cmd.name);
+                let mut file_write: FileWriter = FileWriter::new(&filename);
+                println!("Writing graph to file {}", cmd.name.to_string());
+                self.network.print_graph(&mut file_write);
             }
             _ => {
                 println!("Unrecognized command")
