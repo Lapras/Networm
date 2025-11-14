@@ -6,6 +6,8 @@ use commands::{Command, AddCommand};
 use crate::net_graph::NetGraph;
 use crate::machine::Machine;
 
+use std::io::{Write, stdout};
+
 pub struct Server {
     network : NetGraph,
 }
@@ -21,30 +23,42 @@ impl Server {
     pub fn server_loop(&mut self) {
         println!("N E T W O R M");
         loop {
+            let mut cont = true;
             print!("> ");
+            stdout().flush();
 
             let input = input::parse_input(input::read_line());
             match input {
                 Some(cli) => {
-                    self.handle_command(cli.command)
+                    cont = self.handle_command(cli.command);
                 }
                 None => {
                     println!("Invalid command")
                 }
             }
+            if !cont {
+                break
+            }
         }
     }
 
-    fn handle_command(&mut self, command: Command) {
+    fn handle_command(&mut self, command: Command) -> bool {
         match command {
             Command::Add(add_cmd) => self.handle_add(add_cmd),
             Command::List => {
                 self.list_machines();
             }
+            Command::Exit => {
+                return false
+            }
+            Command::Connect(cmd) => {
+                self.connect_machines(cmd);
+            }
             _ => {
                 println!("Unrecognized command")
             }
         }
+        return true
     }
 
     fn handle_add(&mut self, add_cmd: AddCommand) {
@@ -57,6 +71,10 @@ impl Server {
                 // handle adding address
             }
         }
+    }
+
+    fn connect_machines(&mut self, Connect {name1 : name1, name2 : name2}) {
+        self.network.find_node(name1)
     }
     
     fn add_machine(&mut self, name : String, address : Option<String>) {

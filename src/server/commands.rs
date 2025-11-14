@@ -14,7 +14,7 @@ pub enum Command {
     Add(AddCommand),
     Connect(Connect),
     SetLocal,
-    Exit
+    Exit,
 }
 
 #[derive(Debug, Subcommand)]
