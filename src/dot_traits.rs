@@ -5,8 +5,8 @@ pub trait DotNode {
     fn print_node(&self) -> String;
     fn name(&self) -> String;
     fn get_cluster(&self) -> &Option<Rc<DotCluster>>;
+    fn address(&self) -> Vec<String>;
 }
-
 
 #[derive(PartialEq, Eq, Hash)]
 

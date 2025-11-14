@@ -1,5 +1,7 @@
+use petgraph::graph::Node;
 use petgraph::prelude::*;
 use petgraph::visit::IntoNodeReferences;
+use petgraph::algo::dijkstra;
 
 use crate::dot_traits::DotNode;
 use crate::dot_traits::DotCluster;
@@ -35,6 +37,12 @@ impl NetGraph {
 
     pub fn add_edge(&mut self, source: NodeIndex, target: NodeIndex) {
         self.graph.add_edge(source, target, ());
+    }
+
+    pub fn remove_edge(&mut self, source: NodeIndex, target: NodeIndex) {
+        if let Some(edge) = self.graph.find_edge(source, target) {
+            self.graph.remove_edge(edge);
+        }
     }
 
     pub  fn print_graph<W: Writer>(&self, writer: &mut W)  {
@@ -147,6 +155,47 @@ impl NetGraph {
             }
         }
         None
+    }
+
+    pub fn find_node_data(&self, name : &str) -> Option<&Rc<dyn DotNode>> {
+        if let Some(idx) = self.find_node(name) {
+            return self.get_node_data(idx)
+        } else  {
+            return None
+        }
+    }
+
+
+    pub fn find_pair(
+        &self,
+        name1: &str,
+        name2: &str,
+        ) -> Result<(NodeIndex, NodeIndex), String> {
+        let maybe_node1 = self.find_node(name1);
+        let maybe_node2 = self.find_node(name2);
+
+        match (maybe_node1, maybe_node2) {
+            (Some(n1), Some(n2)) => Ok((n1, n2)),
+            (None, Some(_)) => Err(format!("Machine '{}' not found", name1)),
+            (Some(_), None) => Err(format!("Machine '{}' not found", name2)),
+            (None, None) => Err(format!("Machines '{}' and '{}' not found", name1, name2)),
+        }
+    }
+
+    pub fn find_path(&self, name1: &str, name2: &str) {
+        if let Ok((src, dest)) = self.find_pair(name1, name2) {
+            let node_map = dijkstra(&self.graph, src, Some(dest), |_| 1);
+            for (node, cost) in &node_map {
+                println!("{} -> cost {}", self.graph[*node].name(), cost);
+            }
+        } else {
+            println!("Failed to find pair");
+        }
+    }
+
+
+    fn get_node_data(&self, idx : NodeIndex) -> Option<&Rc<dyn DotNode>> {
+        return self.graph.node_weight(idx);
     }
 
     pub fn print_nodes(&self) {

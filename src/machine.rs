@@ -55,5 +55,8 @@ impl DotNode for Machine {
     fn get_cluster(&self) -> &Option<Rc<DotCluster>>  {
         &self.cluster
     }
+    fn address(&self) -> Vec<String> {
+        self.address_list.clone()
+    }
 }
 

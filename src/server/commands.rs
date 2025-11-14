@@ -13,7 +13,9 @@ pub enum Command {
     #[clap(subcommand)]
     Add(AddCommand),
     Connect(Connect),
-    SetLocal,
+    Disconnect(Connect),
+    Path(Path),
+    SetLocal(SetLocal),
     Exit,
 }
 
@@ -38,4 +40,15 @@ pub struct Address {
 pub struct Connect {
     pub name1 : String,
     pub name2 : String
+}
+
+#[derive(Debug, Args)]
+pub struct SetLocal {
+    pub name : String
+}
+
+#[derive(Debug, Args)]
+pub struct Path {
+    pub source : String,
+    pub dest : String,
 }

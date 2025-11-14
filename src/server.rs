@@ -1,22 +1,27 @@
 mod input;
 mod commands;
 
-use commands::{Command, AddCommand, Connect};
+use commands::{Command, AddCommand, Connect, SetLocal, Path};
 
-use crate::net_graph::NetGraph;
+use crate::net_graph::{NetGraph};
+use crate::dot_traits::DotNode;
 use crate::machine::Machine;
+
+use std::rc::Rc;
 
 use std::io::{Write, stdout};
 
 pub struct Server {
     network : NetGraph,
+    local_machine : Option<Rc<dyn DotNode>>
 }
 
 impl Server {
     pub fn new() -> Server {
         let graph = NetGraph::new();
         Server {
-            network : graph
+            network : graph,
+            local_machine : None
         }
     }
 
@@ -53,6 +58,15 @@ impl Server {
             }
             Command::Connect(cmd) => {
                 self.connect_machines(cmd);
+            }
+            Command::Disconnect(cmd) => {
+                self.disconnect_machines(cmd);
+            }
+            Command::Path(cmd) => {
+                self.print_path(cmd.source, cmd.dest)
+            }
+            Command::SetLocal(cmd) => {
+                self.set_local_machine(cmd.name);
             }
             _ => {
                 println!("Unrecognized command")
@@ -96,6 +110,35 @@ impl Server {
             }
         }
     }
+
+    fn disconnect_machines(&mut self, connect : Connect) {
+        let name1 = connect.name1.clone();
+        let name2 = connect.name2.clone();
+
+        let maybe_node1 = self.network.find_node(&connect.name1);
+        let maybe_node2 = self.network.find_node(&connect.name2);
+
+        match (maybe_node1, maybe_node2) {
+            (Some(node1), Some(node2)) => {
+                self.network.remove_edge(node1, node2);
+                println!("Connected {} and {}", name1, name2);
+            }
+            (None, Some(_)) => {
+                println!("Machine '{}' not found", name1);
+            }
+            (Some(_), None) => {
+                println!("Machine '{}' not found", name2);
+            }
+            (None, None) => {
+                println!("Machines '{}' and '{}' not found", name1, name2);
+            }
+        }
+    }
+
+    fn print_path(&mut self, src_name : String, dst_name : String) {
+        self.network.find_path(&src_name, &dst_name)
+    }
+
     
     fn add_machine(&mut self, name : String, address : Option<String>) {
         let mut machine = Machine::new(name.clone(), None);
@@ -112,7 +155,20 @@ impl Server {
         }
     }
 
+    fn set_local_machine(&mut self, name : String) {
+        match self.network.find_node_data(&name) {
+            Some(node) => {
+                self.local_machine =  Some(node.clone());
+                println!("Set machine {name}  as local")
+            }
+            None => println!("Could not fine machine with name {name}"),
+        };
+    }
+
     fn list_machines(&mut self) {
         self.network.print_nodes();
+        if let Some(machine) = &self.local_machine {
+            println!("Local machine: {}", machine.name());
+        }
     }
 }
