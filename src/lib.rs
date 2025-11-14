@@ -4,3 +4,4 @@ pub mod writers;
 pub mod dot_traits;
 pub mod scanners;
 pub mod server;
+pub mod ssh;

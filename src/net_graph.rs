@@ -182,25 +182,51 @@ impl NetGraph {
         }
     }
 
-    pub fn find_path(&self, name1: &str, name2: &str) {
-        if let Ok((src, dest)) = self.find_pair(name1, name2) {
-            let result = astar(&self.graph,
-                src,
-              |node| node == dest,
-            |_| 1,
-        |_| 0);
-            match result {
-                Some((cost, path)) => {
-                    println!("{cost} hops");
-                    for node in path {
-                        println!(" - {}", self.graph[node].name())
-                    }
-                }
-                None => println!("Failed to find path")
-            }
-        } else {
-            println!("Failed to find pair");
+    pub fn find_path(&self, name1: &str, name2: &str) -> Result<Vec<&Rc<dyn DotNode>>, String> {
+        let (src, dest) = self.find_pair(name1, name2)
+            .map_err(|_| "Failed to find pair".to_string())?;
+
+
+        let result = astar(&self.graph,
+            src,
+          |node| node == dest,
+        |_| 1,
+    |_| 0);
+       let result = astar(
+        &self.graph,
+        src,
+        |node| node == dest,
+        |_| 1,
+        |_| 0,
+        );
+
+        match result {
+            Some((_cost, path)) => {
+                let weights : Vec<&Rc<dyn DotNode>> = path.iter()
+                    .map(|&idx| & self.graph[idx])
+                    .collect();
+                Ok(weights)
+            }, // Return the ordered path
+            None => Err("Could not find path".to_string()),
         }
+    }
+
+    pub fn print_path(&self, name1: &str, name2: &str) {
+        match self.find_path(name1, name2) {
+            Ok(path) => {
+                println!("Path from {} to {}:", name1, name2);
+                for node in path {
+                    println!(" - {}", node.name());
+                }
+            }
+            Err(e) => {
+                println!("Error finding path: {}", e);
+            }
+        }
+    }
+
+    pub fn test_connect(&mut self, source : &str, dest : &str) {
+        self.find_path(source, dest);
     }
 
 

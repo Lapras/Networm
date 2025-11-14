@@ -3,7 +3,7 @@ mod commands;
 
 use commands::{Command, AddCommand, Connect, SetLocal, Path};
 
-use crate::net_graph::{NetGraph};
+use crate::net_graph::{self, NetGraph};
 use crate::dot_traits::DotNode;
 use crate::machine::Machine;
 
@@ -63,11 +63,14 @@ impl Server {
                 self.disconnect_machines(cmd);
             }
             Command::Path(cmd) => {
-                self.print_path(cmd.source, cmd.dest)
+                self.print_path(cmd.source, cmd.dest);
             }
             Command::SetLocal(cmd) => {
                 self.set_local_machine(cmd.name);
             }
+            // Command::Test(cmd) => {
+            //     self.test_connect(cmd.source, cmd.dest);
+            // }
             _ => {
                 println!("Unrecognized command")
             }
@@ -136,7 +139,7 @@ impl Server {
     }
 
     fn print_path(&mut self, src_name : String, dst_name : String) {
-        self.network.find_path(&src_name, &dst_name)
+        self.network.print_path(&src_name, &dst_name)
     }
 
     
@@ -163,6 +166,19 @@ impl Server {
             }
             None => println!("Could not fine machine with name {name}"),
         };
+    }
+
+    fn test_connect(&mut self, source : &str, dest : &str) {
+        match self.network.find_path(source, dest) {
+            Ok(path) => {
+                let addresses : Vec<String> = path.iter()
+                    .filter_map(|node| node.address().get(0).cloned())
+                    .collect();
+            }
+            Err(e) => {
+                println!("Error testing connection {e}");
+            }
+        }
     }
 
     fn list_machines(&mut self) {

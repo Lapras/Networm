@@ -16,6 +16,7 @@ pub enum Command {
     Disconnect(Connect),
     Path(Path),
     SetLocal(SetLocal),
+    Test(Path),
     Exit,
 }
 
