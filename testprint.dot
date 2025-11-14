@@ -3,9 +3,14 @@ graph Graph {
 	splines=false
 	
 	local [label="{ local | { IP | localhost }}"];
-	test1 [label="{ test1 | { IP | 10.0.1.50 }}"];
-	test2 [label="{ test2 | { IP | 192.0.1.11 }}"];
+	entry [label="{ entry | { IP | 10.0.1.50 }}"];
+	hop1 [label="{ hop1 | { IP | 192.168.1.11 }}"];
+	hop2 [label="{ hop2 | { IP | 192.168.1.12 }}"];
+	target [label="{ target | { IP | 192.168.2.10 }}"];
 	
-	local -- test1
-	test1 -- test2
+	local -- entry
+	entry -- hop1
+	entry -- hop2
+	hop1 -- target
+	hop2 -- target
 }
