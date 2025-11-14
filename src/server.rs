@@ -121,7 +121,7 @@ impl Server {
         match (maybe_node1, maybe_node2) {
             (Some(node1), Some(node2)) => {
                 self.network.remove_edge(node1, node2);
-                println!("Connected {} and {}", name1, name2);
+                println!("Disconnected {} and {}", name1, name2);
             }
             (None, Some(_)) => {
                 println!("Machine '{}' not found", name1);

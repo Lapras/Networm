@@ -1,7 +1,7 @@
 use petgraph::graph::Node;
 use petgraph::prelude::*;
 use petgraph::visit::IntoNodeReferences;
-use petgraph::algo::dijkstra;
+use petgraph::algo::astar;
 
 use crate::dot_traits::DotNode;
 use crate::dot_traits::DotCluster;
@@ -184,9 +184,19 @@ impl NetGraph {
 
     pub fn find_path(&self, name1: &str, name2: &str) {
         if let Ok((src, dest)) = self.find_pair(name1, name2) {
-            let node_map = dijkstra(&self.graph, src, Some(dest), |_| 1);
-            for (node, cost) in &node_map {
-                println!("{} -> cost {}", self.graph[*node].name(), cost);
+            let result = astar(&self.graph,
+                src,
+              |node| node == dest,
+            |_| 1,
+        |_| 0);
+            match result {
+                Some((cost, path)) => {
+                    println!("{cost} hops");
+                    for node in path {
+                        println!(" - {}", self.graph[node].name())
+                    }
+                }
+                None => println!("Failed to find path")
             }
         } else {
             println!("Failed to find pair");
