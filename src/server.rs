@@ -1,4 +1,9 @@
 mod input;
+mod commands;
+
+use commands::Command;
+
+use crate::server::input::InputParser;
 
 
 pub fn server_loop() {
@@ -6,10 +11,26 @@ pub fn server_loop() {
     loop {
         print!("> ");
 
-        let command = input::parse_input(input::read_line());
+        let input = input::parse_input(input::read_line());
 
+        match input {
+            Some(command) => {
 
+            }
+            None => {
+                println!("Invalid command")
+            }
+        }
     }
 }
 
-
+fn handle_command(command: InputParser) {
+    match command {
+        Command::List => {
+            println!("Handling the list command");
+        }
+        _ => {
+            println!("Unrecognized Command")
+        }
+    }
+}

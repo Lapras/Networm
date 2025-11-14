@@ -1,25 +1,26 @@
 use clap::{Parser, Subcommand};
 use std::io::{self};
 
+use crate::server::commands;
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
 pub struct InputParser {
     #[command(subcommand)]
-    command: Command,
+    command: commands::Command,
 }
 
-#[derive(Debug, Subcommand)]
-pub enum Command {
-    List,
-}
 
-pub fn parse_input(line: String) {
+pub fn parse_input(line: String) -> Option<InputParse> {
     let args = line.split_whitespace();
     let args = std::iter::once("networm").chain(args);
 
     match InputParser::try_parse_from(args) {
-    Ok(cli) => println!("Parsed successfully!"),
-    Err(err) => println!("Failed: {}", err),
+        Ok(cli) => {
+            Some(cli)
+        },
+        Err(err) => {
+            None
+        }
     }
 }
 
