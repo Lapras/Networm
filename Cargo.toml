@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.51", features = ["derive"] }
 crossterm = "0.28.1"
+io = "0.0.2"
 openssh = "0.11.5"
 petgraph = "0.6.5"
 qscan = "0.6.0"
