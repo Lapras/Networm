@@ -6,6 +6,8 @@ use commands::{Command, AddCommand, Connect, SetLocal, Path};
 use crate::net_graph::{self, NetGraph};
 use crate::dot_traits::DotNode;
 use crate::machine::Machine;
+use crate::ssh::test_connection;
+use tokio;
 
 use std::rc::Rc;
 
@@ -68,9 +70,10 @@ impl Server {
             Command::SetLocal(cmd) => {
                 self.set_local_machine(cmd.name);
             }
-            // Command::Test(cmd) => {
-            //     self.test_connect(cmd.source, cmd.dest);
-            // }
+            Command::Test(cmd) => {
+                println!("Testing a connection");
+                self.test_connect(&cmd.source, &cmd.dest);
+            }
             _ => {
                 println!("Unrecognized command")
             }
@@ -169,17 +172,30 @@ impl Server {
     }
 
     fn test_connect(&mut self, source : &str, dest : &str) {
-        match self.network.find_path(source, dest) {
+        println!("Testing connection using path:");
+        self.print_path(source.to_string(), dest.to_string());
+        match self.network.find_path(&source, &dest) {
             Ok(path) => {
-                let addresses : Vec<String> = path.iter()
+                let addresses = path.iter()
                     .filter_map(|node| node.address().get(0).cloned())
+                    .map(|addr| format!("root@{}", addr))
                     .collect();
-            }
+
+                 let result = tokio::runtime::Runtime::new()
+                    .unwrap()
+                    .block_on(test_connection(addresses));
+                match result {
+                    Ok(()) => println!("Connection succesful"),
+                    Err(e) => println!("Connection failed {e}"),
+                    }
+                }
             Err(e) => {
-                println!("Error testing connection {e}");
+                println!("Error finding path {e}");
             }
         }
     }
+
+       
 
     fn list_machines(&mut self) {
         self.network.print_nodes();
