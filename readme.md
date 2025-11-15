@@ -1,7 +1,3 @@
 # NetWorm
 
-NetWorm is currently a project I'm working on. The goal is a networking library written in rust that is able to handle the mapping, visualizataion, and navigation of complex networks. Differentiation between, physical and virtual machines to give a comprehensive view of a network. Potentially later expanding into a C2 framework for cybersecurity.
-
-Below is an example of the graphs that this program is intended to produce from provided input. Currently, the main.rs function creates a petgraph that represents the example below and prints in DOT notation. Displaying the initial implementation of the graphing system.
-
-![This is supposed to ba an image of a network graph](example.png "Example Graph")
+NetWorm is a project created by me as part of a mini-research project for CSCE465. NetWorm is a library written in rust to handle the mapping, visualization, and navigation of complex networks. Using Rust's openssh library to facilitate connections across machines. As well as the ability to print graphviz .dot file representations of networks.
