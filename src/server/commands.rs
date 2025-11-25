@@ -18,6 +18,7 @@ pub enum Command {
     SetLocal(SetLocal),
     Test(Path),
     PrintGraph(File),
+    ReadInput(File),
     Exit,
 }
 

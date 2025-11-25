@@ -11,9 +11,11 @@ use tokio;
 
 use crate::writers::FileWriter;
 
+use std::fs::File;
 use std::rc::Rc;
+use std::io::BufRead;
 
-use std::io::{Write, stdout};
+use std::io::{BufReader, Write, stdout};
 
 pub struct Server {
     network : NetGraph,
@@ -81,6 +83,30 @@ impl Server {
                 let mut file_write: FileWriter = FileWriter::new(&filename);
                 println!("Writing graph to file {}", cmd.name.to_string());
                 self.network.print_graph(&mut file_write);
+            }
+            Command::ReadInput(cmd) => {
+                if let Ok(file) = File::open(&cmd.name) {
+                    let reader = BufReader::new(file);
+                    for line_result in reader.lines() {
+                        match line_result {
+                            Ok(line) => {
+                                let input = input::parse_input(line);
+                                match input {
+                                    Some(cli) => {
+                                        self.handle_command(cli.command);
+                                    }
+                                    None => {
+                                        println!("Invalid command")
+                                    }
+                                }
+                            }
+                            Err(e) => eprintln!("Error reading line: {e}"),
+                        }
+                    }
+                } else {
+                    println!("Could not find file {}", cmd.name.to_string())
+                }
+
             }
             _ => {
                 println!("Unrecognized command")
