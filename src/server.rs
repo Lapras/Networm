@@ -6,12 +6,13 @@ use commands::{Command, AddCommand, Connect, SetLocal, Path};
 use crate::net_graph::{self, NetGraph};
 use crate::dot_traits::DotNode;
 use crate::machine::Machine;
-use crate::ssh::test_connection;
+use crate::ssh;
 use tokio;
 
 use crate::writers::FileWriter;
 
 use std::fs::File;
+use std::path;
 use std::rc::Rc;
 use std::io::BufRead;
 
@@ -66,7 +67,7 @@ impl Server {
                 self.connect_machines(cmd);
             }
             Command::Disconnect(cmd) => {
-                self.disconnect_machines(cmd);
+                self.disconnect_machines(&cmd.name1, &cmd.name2);
             }
             Command::Path(cmd) => {
                 self.print_path(cmd.source, cmd.dest);
@@ -76,7 +77,11 @@ impl Server {
             }
             Command::Test(cmd) => {
                 println!("Testing a connection");
-                self.test_connect(&cmd.source, &cmd.dest);
+                let success = self.test_connect(&cmd.source, &cmd.dest);
+                if cmd.recurisve && !success {
+                    println!("Starting Recursive Diagnosis");
+                    self.diagnose_connection(&cmd.source, &cmd.dest);
+                }
             }
             Command::PrintGraph(cmd) => {
                 let filename = format!("{}.dot",cmd.name);
@@ -151,12 +156,10 @@ impl Server {
         }
     }
 
-    fn disconnect_machines(&mut self, connect : Connect) {
-        let name1 = connect.name1.clone();
-        let name2 = connect.name2.clone();
+    fn disconnect_machines(&mut self, name1 : &str, name2 : &str) {
 
-        let maybe_node1 = self.network.find_node(&connect.name1);
-        let maybe_node2 = self.network.find_node(&connect.name2);
+        let maybe_node1 = self.network.find_node(name1);
+        let maybe_node2 = self.network.find_node(name2);
 
         match (maybe_node1, maybe_node2) {
             (Some(node1), Some(node2)) => {
@@ -205,26 +208,26 @@ impl Server {
         };
     }
 
-    fn test_connect(&mut self, source : &str, dest : &str) {
-        println!("Testing connection using path:");
-        self.print_path(source.to_string(), dest.to_string());
-        match self.network.find_path(&source, &dest) {
+    fn test_connect(&mut self, source : &str, dest : &str) -> bool {
+        let path = match self.network.find_path(source, dest) {
             Ok(path) => {
-                let addresses = path.iter()
-                    .filter_map(|node| node.address().get(0).cloned())
-                    .map(|addr| format!("root@{}", addr))
-                    .collect();
-
-                 let result = tokio::runtime::Runtime::new()
-                    .unwrap()
-                    .block_on(test_connection(addresses));
-                match result {
-                    Ok(()) => println!("Connection succesful"),
-                    Err(e) => println!("Connection failed {e}"),
-                    }
-                }
+                println!("Testing connection using path: ");
+                self.network.print_path(source, dest);
+                path
+            }
             Err(e) => {
-                println!("Error finding path {e}");
+                println!("Error: {e}");
+                return false
+                }
+            };
+        match self.network.test_connect(&path) {
+            Ok(()) => {
+                println!("Connection succesful");
+                return true
+            }
+            Err(e) => {
+                    println!("Connection failure {e}");
+                return false
             }
         }
     }
@@ -236,5 +239,41 @@ impl Server {
         if let Some(machine) = &self.local_machine {
             println!("Local machine: {}", machine.name());
         }
+    }
+
+    fn diagnose_connection(&mut self, source : &str, dest : &str) {
+        let path = match self.network.find_path(source, dest) {
+            Ok(p) => p,
+            Err(e) => {
+                println!("Error finding path: {e}");
+                return;
+            }
+        };
+
+        if path.len() < 2 {
+            println!("Path too short to test connectivity");
+            return;
+        }
+
+        for i in 2..=path.len() {
+            let cursor = &path[..i]; 
+
+            match self.network.test_connect(&cursor.to_vec()) {
+                Ok(()) => {
+                    println!("Connection succesful to node {} at address {}", &path[i-1].name(), &path[i-1].address()[0]);
+                }
+                Err(e) => {
+                    println!("Connection failed to node {} at address {} \n Error {e}", &path[i-1].name(), &path[i-1].address()[0]);
+                    let link1 = &path[i-1].name();
+                    let link2 = &path[i-2].name();
+                    println!("Disconnectiong {link1} and {link2}");
+                    self.disconnect_machines(link1, link2);
+
+                    println!("Retrying connection...");
+                    self.diagnose_connection(source, dest);
+                    return;
+                }
+            }
+        }   
     }
 }

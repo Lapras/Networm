@@ -5,6 +5,7 @@ use petgraph::algo::astar;
 
 use crate::dot_traits::DotNode;
 use crate::dot_traits::DotCluster;
+use crate::ssh;
 
 use crate::writers::Writer;
 
@@ -182,7 +183,7 @@ impl NetGraph {
         }
     }
 
-    pub fn find_path(&self, name1: &str, name2: &str) -> Result<Vec<&Rc<dyn DotNode>>, String> {
+    pub fn find_path(&self, name1: &str, name2: &str) -> Result<Vec<Rc<dyn DotNode + 'static>>, String> {
         let (src, dest) = self.find_pair(name1, name2)
             .map_err(|_| "Failed to find pair".to_string())?;
 
@@ -202,8 +203,8 @@ impl NetGraph {
 
         match result {
             Some((_cost, path)) => {
-                let weights : Vec<&Rc<dyn DotNode>> = path.iter()
-                    .map(|&idx| & self.graph[idx])
+                let weights : Vec<Rc<dyn DotNode>> = path.iter()
+                    .map(|&idx| Rc::clone(&self.graph[idx]))
                     .collect();
                 Ok(weights)
             }, // Return the ordered path
@@ -225,8 +226,37 @@ impl NetGraph {
         }
     }
 
-    pub fn test_connect(&mut self, source : &str, dest : &str) {
-        self.find_path(source, dest);
+    pub fn get_path(&self, name1: &str, name2: &str) {
+        match self.find_path(name1, name2) {
+            Ok(path) => {
+                println!("Path from {} to {}:", name1, name2);
+                for node in path {
+                    println!(" - {}", node.name());
+                }
+            }
+            Err(e) => {
+                println!("Error finding path: {}", e);
+            }
+        }
+    }
+
+    pub fn test_connect(&mut self, path : &Vec<Rc<dyn DotNode>>) -> Result<(), String> {
+        let addresses = path.iter()
+                .filter_map(|node| node.address().get(0).cloned())
+                .map(|addr| format!("root@{}", addr))
+                .collect();
+
+                let result = tokio::runtime::Runtime::new()
+                .unwrap()
+                .block_on(ssh::test_connection(addresses));
+            match result {
+                Ok(()) => {
+                    Ok(())
+                }
+                Err(e) => {
+                    return Err(e)
+                } 
+            }
     }
 
 

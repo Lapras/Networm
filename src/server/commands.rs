@@ -16,7 +16,7 @@ pub enum Command {
     Disconnect(Connect),
     Path(Path),
     SetLocal(SetLocal),
-    Test(Path),
+    Test(Test),
     PrintGraph(File),
     ReadInput(File),
     Exit,
@@ -26,6 +26,14 @@ pub enum Command {
 pub enum AddCommand {
     Machine(Machine),
     Address(Address),
+}
+
+#[derive(Debug, Args)]
+pub struct Test {
+    #[clap(short, long)]
+    pub recurisve: bool,
+    pub source: String,
+    pub dest: String,
 }
 
 #[derive(Debug, Args)]
